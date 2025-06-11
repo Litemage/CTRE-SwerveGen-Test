@@ -1,0 +1,105 @@
+site_name: Argos CTRE Swerve Example Docs
+repo_url: https://github.com/JPiscitello7351/CTRE-SwerveGen/
+theme:
+  name: material
+
+  # Font Configuration
+  font:
+    text: Ubuntu
+    code: Ubuntu Mono
+  features:
+    - navigation.footer
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - toc.follow
+    - toc.integrate
+
+  favicon: assets/favicon.png
+  logo: assets/favicon.png
+  # icon: 
+    # logo: material/code-braces
+
+  # Colors
+  palette:
+    # Dark theme
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Dark Mode
+      primary: yellow
+      accent: orange
+
+    # Light theme
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Light Mode
+      primary: yellow
+      accent: orange
+
+# Copyright
+# copyright: Copyright &copy Bradley University 2025
+
+# Navigation
+nav:
+  - Home:
+    - CTRE Swerve Example Repo: index.md
+  - Summer-Robot-2025:
+    - 'Structure List': 'summer-robot-2025/annotated.md'
+    - 'File List Index': 'summer-robot-2025/files.md'
+    - 'Links': 'summer-robot-2025/links.md'
+
+
+
+plugins:
+  - search
+  - mkdoxy:
+      projects:
+        summer-robot-2025:
+          src-dirs: ../src/main # path to source code (support multiple paths separated by space) => INPUT
+          full-doc: True # if you want to generate full documentation
+          doxy-cfg: # standard doxygen configuration (key: value)
+            FILE_PATTERNS: "*.cpp *.h*" # specify file patterns to filter out
+            RECURSIVE: True # recursive search in source directories
+
+
+use_directory_urls: true # Include .html extension in links
+
+# Extensions
+markdown_extensions:
+  - attr_list
+  # Emojis
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator:
+        !!python/name:material.extensions.emoji.to_svg # Code block highlighting
+
+
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - javascripts/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css
