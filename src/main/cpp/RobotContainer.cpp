@@ -18,20 +18,20 @@ void RobotContainer::ConfigureBindings()
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.SetDefaultCommand(
 
-
-
         // Drivetrain will execute this command periodically
         drivetrain.ApplyRequest([this]() -> auto&& {
 
-            // auto driveMultiplier = speeds::drive::driveSpeedMultiplier;
-            // double turnMultiplier = speeds::drive::turnSpeedMultiplier;
-            // if(joystick.GetLeftX){
-            //     driveMultiplier = drive::speeds::turb;
-            // }
+            m_driveSpeedMultiplier = speeds::drive::driveSpeedMultiplier; // Drive speed multiplier defined in constants.h
+            m_turnSpeedMultiplier = speeds::drive::turnSpeedMultiplier; // Turn speed multiplier defined in constants.h
 
-            return drive.WithVelocityX(-joystick.GetLeftY() * MaxSpeed * speeds::drive::driveSpeedMultiplier) // Drive forward with negative Y (forward)
-                .WithVelocityY(-joystick.GetLeftX() * MaxSpeed * speeds::drive::driveSpeedMultiplier) // Drive left with negative X (left)
-                .WithRotationalRate(-joystick.GetRightX() * MaxAngularRate * speeds::drive::turnSpeedMultiplier); // Drive counterclockwise with negative X (left)
+            if(joystick.RightBumper().Get()){ // Get the state of the right bumper and apply speed changes if bumper is pressed
+                m_driveSpeedMultiplier = speeds::drive::turboDriveSpeedMultiplier; // Turbo speed!!!
+                m_turnSpeedMultiplier = speeds::drive::turboTurnSpeedMultiplier; // Turbo turn rate!!!
+            }
+
+            return drive.WithVelocityX(-joystick.GetLeftY() * MaxSpeed * m_driveSpeedMultiplier) // Drive forward with negative Y (forward)
+                .WithVelocityY(-joystick.GetLeftX() * MaxSpeed * m_driveSpeedMultiplier) // Drive left with negative X (left)
+                .WithRotationalRate(-joystick.GetRightX() * MaxAngularRate * m_turnSpeedMultiplier); // Drive counterclockwise with negative X (left)
         })
     );
 

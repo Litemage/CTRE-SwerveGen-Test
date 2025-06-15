@@ -17,8 +17,8 @@
 namespace speeds {
     namespace drive {
         constexpr double driveSpeedMultiplier = 0.5;
-        constexpr double turnSpeedMultiplier = 1.5;
-        constexpr double turboDriveSpeedMultiplier = 1;
-        constexpr double turboTurnSpeedMultiplier = 1;
+        constexpr double turnSpeedMultiplier = 1.25;
+        constexpr double turboDriveSpeedMultiplier = 0.75;
+        constexpr double turboTurnSpeedMultiplier = 1.25;
     }
 }
