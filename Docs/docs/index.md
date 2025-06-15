@@ -55,3 +55,7 @@ void RobotContainer::ConfigureBindings()
     // More stuff ...
 }
 ```
+
+## Odometry is off solutions
+
+* Check wheel diameter & that it is accurate
