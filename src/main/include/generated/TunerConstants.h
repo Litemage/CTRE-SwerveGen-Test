@@ -80,7 +80,7 @@ private:
 
     static constexpr units::scalar_t kDriveGearRatio = 6.122448979591837;
     static constexpr units::scalar_t kSteerGearRatio = 12.8;
-    static constexpr units::inch_t kWheelRadius = 2_in;
+    static constexpr units::inch_t kWheelRadius = 1.9_in;
 
     static constexpr bool kInvertLeftSide = false;
     static constexpr bool kInvertRightSide = true;
