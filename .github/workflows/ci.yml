@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Configure Git Credentials
-        working-directory: ./Docs
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
@@ -20,7 +19,6 @@ jobs:
         with:
           python-version: 3.x
       - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-        working-directory: ./Docs
       - uses: actions/cache@v4
         with:
           key: mkdocs-material-${{ env.cache_id }}
@@ -28,6 +26,5 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material
-        working-directory: ./Docs
       - run: mkdocs gh-deploy --force
         working-directory: ./Docs
