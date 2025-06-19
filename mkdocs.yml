@@ -11,10 +11,10 @@
 #   
 #   - Jacob S. <jsimeone0105@gmail.com>
 
-site_name: Argos CTRE Swerve Example Docs
-site_url: https://litemage.github.io/ctre-swervegen-test/
+site_name: Argos CTRE Summer Swerve Docs
+site_url: https://litemage.github.io/CTRE-SwerveGen-Test/
 repo_url: https://github.com/JPiscitello7351/CTRE-SwerveGen/
-docs_dir: "../docs/"
+docs_dir: docs
 theme:
   name: material
 
