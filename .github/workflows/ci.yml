@@ -1,32 +1,43 @@
 name: ci
+
 on:
   push:
     branches:
-      - master
-      - main
+      - master # or main
+
 permissions:
   contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important for gh-deploy to work correctly
+
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: actions/setup-python@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.x
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v4
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
+          python-version: 3.x # Use a specific Python version, e.g., 3.9, 3.10
+
       - name: Install dependencies
         run: |
-          sudo apt-get install doxygen
-      - run: pip install mkdocs-material mkdoxy
-      - run: mkdocs gh-deploy --force --config-file ./mkdocs.yml
+          pip install mkdocs mkdocs-material mkdoxy
+          # Add any other plugins you use in your mkdocs.yml
+          # pip install mkdocs-include-dir-to-nav mkdocs-awesome-pages-plugin
+
+      - name: Deploy MkDocs site
+        run: mkdocs gh-deploy --force
+        env:
+          # This token is automatically provided by GitHub Actions for write access
+          # to the repository where the workflow is running.
+          # It's only needed if you are deploying to a different repository or need more granular control.
+          # For typical gh-pages deployments within the same repo, it might not be strictly necessary
+          # as the GITHUB_TOKEN has sufficient permissions.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
