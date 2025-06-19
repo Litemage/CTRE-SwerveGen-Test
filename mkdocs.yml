@@ -86,7 +86,7 @@ plugins:
   - mkdoxy:
       projects:
         summer-robot-2025:
-          src-dirs: ../src/main # path to source code (support multiple paths separated by space) => INPUT
+          src-dirs: ./src/main # path to source code (support multiple paths separated by space) => INPUT
           full-doc: True # if you want to generate full documentation
           doxy-cfg: # standard doxygen configuration (key: value)
             FILE_PATTERNS: "*.cpp *.h*" # specify file patterns to filter out
