@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: 'main'
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
@@ -27,4 +29,5 @@ jobs:
             mkdocs-material-
       - run: sudo apt install doxygen
       - run: pip install mkdocs-material mkdoxy
-      - run: mkdocs gh-deploy --force
+      - name: Deploy MkDocs
+        run: mkdocs gh-deploy --force
