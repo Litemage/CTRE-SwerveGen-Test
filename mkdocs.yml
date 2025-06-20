@@ -12,7 +12,7 @@
 #   - Jacob S. <jsimeone0105@gmail.com>
 
 site_name: Argos CTRE Summer Swerve Docs
-site_url: https://JPiscitello7351.github.io/CTRE-SwerveGen/
+site_url: https://jpiscitello7351.github.io/CTRE-SwerveGen/
 repo_url: https://github.com/JPiscitello7351/CTRE-SwerveGen/
 docs_dir: docs
 theme:
@@ -83,6 +83,7 @@ nav:
 
 plugins:
   - search
+  - offline
   # MkDoxy - The plug-in used for generating docs from code
   - mkdoxy:
       projects:
