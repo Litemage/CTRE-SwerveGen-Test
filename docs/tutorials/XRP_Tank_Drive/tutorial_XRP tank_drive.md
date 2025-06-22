@@ -19,8 +19,8 @@
 >
 > * Turn robot left and right
 > * Drive forward and back
-> * Read left stick from controller
-> * Read right stick from controller
+> * Read left joystick from controller
+> * Read right joystick from controller
 >
 > Now that we have that, let's make a chart of what our code needs to do.
 > Programmers use flow charts a lot to visualize a plan for implementing code.  Try to write your flowchart before looking at the provided one.
@@ -30,8 +30,8 @@
 >
 >  ```mermaid
 >  flowchart TD
->      a[Read right stick from controller]
->      b[Read left stick from controller]
+>      a[Read right joystick from controller]
+>      b[Read left joystick from controller]
 >      c[Set left motor speed]
 >      d[Set right motor speed]
 > 
@@ -60,7 +60,7 @@
 > 2. Select `WPILib: Create a new class/command`.  
 >   ![Create Subsystem](create_subsystem_right_click.png)  
 > <br>
-> 3. Choose `Subsystem` from the list of templates.  
+> 3. Choose `Subsystem` from the list.  
 >   ![alt text](Subystem_Selection.png)  
 > <br>
 > 4. Name the new subsystem `Drivetrain`.  
@@ -451,3 +451,6 @@
 > ```
 >
 > </details>
+
+## Time to test your code
+Great job writing your first XRP code.  it is time to test your code.  Go to [XRP Run Code](../XRP_Run_Code/tutorial_XRP_run_code.md) to test your code
