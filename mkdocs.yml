@@ -14,9 +14,14 @@
 site_name: Argos CTRE Summer Swerve Docs
 site_url: https://litemage.github.io/CTRE-SwerveGen-Test/
 repo_url: https://github.com/JPiscitello7351/CTRE-SwerveGen/
+edit_uri: edit/main/docs
 docs_dir: docs
 theme:
   name: material
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
 
   # Font Configuration
   font:
@@ -29,6 +34,7 @@ theme:
     - navigation.top
     - toc.follow
     - toc.integrate
+    - content.action.edit
 
   favicon: assets/favicon.png
   logo: assets/favicon.png

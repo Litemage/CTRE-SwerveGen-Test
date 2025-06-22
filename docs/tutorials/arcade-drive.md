@@ -494,8 +494,294 @@ created. Don't worry: we'll show you how to create a command.
 
 ### Understanding Subsystems
 
+So, we now know that most of our code will go in `ConfigureButtonBindings`, but, what do we write?
+Before I can answer that, you'll need to very briefly understand [subsystems](https://docs.wpilib.org/en/stable/docs/software/commandbased/subsystems.html)
+and how they organize code in WPILib.
+
+**Subsystems** are a tool for organizing code on your robot in a way that mirrors
+the systems present on the robot in the real world. You can think of them
+like containers for code that all operates one part of the robot, like an arm,
+or the drivetrain.
+
+For instance, you could have a robot that you can break down into its systems:
+
+```mermaid
+flowchart TD
+
+r[Robot]
+d[Drivetrain]
+a[Arm]
+m1[Motor 1]
+m2[Motor 2]
+m3[Motor 3]
+m4[Motor 4]
+m5[Motor 5]
+
+r --> d
+r --> a
+
+d --> m1
+d --> m2
+d --> m3
+d --> m4
+
+a --> m5
+```
+
+In code, we would neet to support setting the speed of each motor individually
+accross all subsystems (inside of `RobotContainer.cpp`):
+
+```mermaid
+flowchart TD
+
+rc[Robot Container.cpp]
+
+m1[Set Motor 1]
+m2[Set Motor 2]
+m3[Set Motor 3]
+m4[Set Motor 4]
+m5[Set Motor 5]
+
+rc --> m1
+rc --> m2
+rc --> m3
+rc --> m4
+rc --> m5
+```
+
+You can see how this would get messy quick in code...
+
+```cpp
+// RobotContainer.cpp
+
+// Would have to define 5 functions in order to support each motor
+
+static void set_motor_1(float speed)
+{
+  // TODO
+}
+
+static void set_motor_2(float speed)
+{
+  // TODO
+}
+
+static void set_motor_3(float speed)
+{
+  // TODO
+}
+
+static void set_motor_4(float speed)
+{
+  // TODO
+}
+
+static void set_motor_5(float speed)
+{
+  // TODO
+}
+
+```
+
+To avoid this, we organize our code so that each physical subystem on our robot 
+(like the drivetrain or arm in the example above) gets its own little box to live in. 
+In code, these end up being other files. This allows clear seperation between
+systems: it's easy to tell which motor belongs to which system. Plus, if we 
+hide the motors away in their own subsystems, we can create functions that are
+much more readable. Instead of `set_motor_5(0.5)` we could write: `set_arm_speed(0.5)`
+which is much more clear.
+
+In our XRP project: we don't have to write any subsystems as one is provided
+for us. I would encourage you to go take a look at both `src/main/cpp/subsystems/Drivetrain.cpp`
+and `src/main/cpp/subsystems/Arm.cpp`. Both of these subsystems do exactly what I
+mentioned before, containing all the components for each system in it's own file.
+
+Particularly in the header (`.h`) file: you'll see a function called `ArcadeDrive`!
+This function is *very* similar to what we'll be implementing below.
+
 ### Default Commands?
+
+Part of the WPILib command-based robot toolkit is the idea that each subsystem
+has some default action that it will perform over and over again, as fast as
+the robot will run. For instance, the drivetrain needs to take data from a controller
+over and over again and then apply those speeds to the drivetrain, many times a second.
+
+This "default command" is where we will put our code to actually run the robot.
+
+So: how do we start this? Well, firstly we need to access our drivetrain subsystem that
+lives in `Drivetrain.cpp` inside of `RototContainer.cpp`. 
+
+First: It's important to understand that the `Drivetrain` subystem is just a C++ class.
+A consequence of this is that just becuause that `Drivetrain.cpp` file exists, doesn't
+mean we have access to it yet in `RobotContainer.cpp`. `Drivetrain.cpp` *defines* what 
+a drivetrain is and whats inside of it, but we need to go into `RobbotContainer.c/h` and
+actually *create* a drivetrain. You can think of it like this: when you write down a 
+recipe for a cake, the act of writing down the instructions doesn't create the cake. 
+You yourself have to follow the instructions to bake the cake to actually make it. 
+This is analagous to what's going on here between `Drivetrain` and `RobotContainer`.
+
+You could say that:
+
+```mermaid
+flowchart TD
+
+r[Robot Container] -->|Depends on| d[Drivetrain]
+```
+
+Anyway: default commands. I said just a moment ago that RobotContainer has to 
+create a drivetrain. Well, if you take a look in `RobotContainer.h` you can 
+find out that the `Drivetrain` *object* is named `m_drive`.
+
+`m_drive` contains a function called `SetDefaultCommand` which just tells
+the subsystem what command to run over and over again as the robot runs. Let's
+go inside of `RobotContainer.cpp` and add that:
+
+```cpp
+// RobotContainer.cpp (omitting parts of file for simplicity)
+
+void RobotContainer::ConfigureButtonBindings() {
+  m_drive.SetDefaultCommand(/* TODO */);
+}
+```
+
+Just one more step before we can start actually writing our arcade drive code:
+
+```cpp
+// RobotContainer.cpp (omitting parts of file for simplicity)
+
+void RobotContainer::ConfigureButtonBindings() {
+  m_drive.SetDefaultCommand(frc2::InstantCommand(
+    [this] () {/* our code goes here */}, {&m_drive}
+  ));
+}
+```
+
+Woah: a lot just happened. Addmitidly, this is a LOT of syntax to swim through
+at the moment. For now, the technicals behind what is going on here is a little
+out of scope for this tutorial so just note that:
+
+* `[this] () {}` is a C++ [lambda](https://www.geeksforgeeks.org/lambda-expression-in-c/), which is just a function we can write in-place where our code will go
+* {&m_drive} is an argument we have to provide to let the command know we are using the `m_drive` subsystem inside of the function we are about to write.
+
+You can view the function protoytpe for the `frc2::InstantCommand` [here](https://github.wpilib.org/allwpilib/docs/release/cpp/classfrc2_1_1_instant_command.html#a61725582dec0e3229cc5fe70e26d2f4d)
 
 ### Writing our Drive Code
 
+Finally: time to write our drive code. First, let's write in psuedo-code using comments
+what we wnat our drivetrain to do.
+
+```cpp
+// RobotContainer.cpp (omitting parts of file for simplicity)
+
+void RobotContainer::ConfigureButtonBindings() {
+  m_drive.SetDefaultCommand(frc2::InstantCommand(
+    [this] () {
+
+      // Read joystick left stick up/down
+      // Read joystick right stick left/right
+
+      // Send values to Drivetrain to be used for ArcadeDrive
+
+    }, {&m_drive}
+  ));
+}
+```
+
+Let's start by reading the joystick. To read a joystick, we'll need to get another
+object, this time for the x-box controller. For this project, the x-box controller
+is called `m_controller` and the function we can use from inside of the controller 
+to get the joystick axis is: `GetRawAxis`. This will output a value from **-1.0 to 1.0.**
+We'll put these values into a couple variables which we'll use later in the next step.
+
+```cpp
+// RobotContainer.cpp (omitting parts of file for simplicity)
+
+void RobotContainer::ConfigureButtonBindings() {
+  m_drive.SetDefaultCommand(frc2::InstantCommand(
+    [this] () {
+
+      // TODO: Verify axis indexes
+      double xSpeed = m_controller.GetRawAxis(0);
+      double zRotation = m_controller.GetRawAxis(1);
+
+      // Send values to Drivetrain to be used for ArcadeDrive
+
+    }, {&m_drive}
+  ));
+}
+```
+
+!!! tip "Variables"
+
+    You'll notice we are assigning the two `m_controller.GetRawAxis()` calls
+    to variables called `xSpeed` and `zRotation` respectively. Variables are
+    just named values in code that we can easily reference. They consist of a 
+    datatype (`double` in this case, which means a number with a decimal like 0.53)
+    and a name (`xSpeed` and `zRotation` in this case). There are other types
+    of variables as well: `bool`, which holds true/false, `int` which holds
+    integers, and others. Objects are just special variables with a dataype 
+    that is a **class**.
+
+Now we need to put these values into the drivetrain so it will drive... arcade style.
+The `m_drive` object (`Drivetrain` subsystem) has a function in it called `ArcadeDrive`.
+You can see it in the `Drivetrain.h` file:
+
+```cpp
+// Drivetrain.h
+
+/**
+   * Drives the robot using arcade controls.
+   *
+   * @param xaxisSpeed the commanded forward movement
+   * @param zaxisRotate the commanded rotation
+   */
+  void ArcadeDrive(double xaxisSpeed, double zaxisRotate);
+```
+
+!!! tip "Finding out What Functions Do"
+
+    If you ever want to find out what a function does in a codebase
+    you are working on, you can check the .h file for comments like
+    what we have above that other developers have left to show
+    what the function does.
+
+So, we call this function and just have to give the x speed (forward) and 
+z axis rotation. If you're wondering: [WPILib defines the coordinate frame](https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html).
+When working with grid systems, or which way is "forward" make sure to always 
+use WPILib's conventions:
+
+![wpilib coordinate frame](../assets/images/arcade-drive/wpilib-coordinates.png)
+
+```cpp
+// RobotContainer.cpp (omitting parts of file for simplicity)
+
+void RobotContainer::ConfigureButtonBindings() {
+  m_drive.SetDefaultCommand(frc2::InstantCommand(
+    [this] () {
+
+      // TODO: Verify axis indexes
+      double xSpeed = m_controller.GetRawAxis(0);
+      double zRotation = m_controller.GetRawAxis(1);
+
+      // Send values to Drivetrain to be used for ArcadeDrive
+      m_drive.ArcadeDrive(xSpeed, zRotation);
+    }, {&m_drive}
+  ));
+}
+```
+
 ## Finish Line 🏃
+
+Well, that's it! We have just made our arcade drive implementation! 
+
+To get your robot running, you will first have to open your WiFi, and 
+connect to your XRP robot's WiFi network.
+
+After that, go ahead and use the `ctrl+shift+p` shortcut and type in `simulate robot code` and
+select `WPILib: Simulate Robot Code`, or click on the wpilib icon and select
+the same command:
+
+![running robot program](../assets/images/arcade-drive/how-to-run.png)
+
+If you're connected to your robot, you should be able to drive it around after
+your code builds!
