@@ -13,7 +13,7 @@
 
 site_name: Argos CTRE Summer Swerve Docs
 site_url: https://litemage.github.io/CTRE-SwerveGen-Test/
-repo_url: https://github.com/JPiscitello7351/CTRE-SwerveGen/
+repo_url: https://github.com/litemage/ctre-SwerveGen-Test/
 edit_uri: edit/main/docs
 docs_dir: docs
 theme:
